@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import java.io.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
@@ -27,27 +28,57 @@ public class changepassword extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-         int IDUSER = (int) session.getAttribute("UserId");
+        int userID = (int) session.getAttribute("UserId");
+        String oldPassword = request.getParameter("oldPassword");
         String newPassword = request.getParameter("newPassword");
         String confirmNewPassword = request.getParameter("confirmNewPassword");
 
+        // Verify old password
+        if (!verifyOldPassword(userID, oldPassword)) {
+            session.setAttribute("errorMessage", "Ancien mot de passe incorrect.");
+            response.sendRedirect("changepassword.jsp");
+            return;
+        }
+
+        // Check if new password matches the confirmation
         if (!newPassword.equals(confirmNewPassword)) {
-            // Handle password mismatch
-            session.setAttribute("errorMessage", "Ne  sont  pas  egaux.");
+            session.setAttribute("errorMessage", "Les nouveaux mots de passe ne correspondent pas.");
             response.sendRedirect("changepassword.jsp");
             return;
         }
 
         String hashedPassword = hashPassword(newPassword);
 
-        if (updateUserPassword(IDUSER, hashedPassword)) {
+        // Update the password
+        if (updateUserPassword(userID, hashedPassword)) {
             // Redirect to changepassword with success message
-
+            session.setAttribute("successMessage", "Le mot de passe a été mis à jour avec succès.");
             response.sendRedirect("Dashboard.jsp");
         } else {
             // Redirect to changepassword with error message
-            session.setAttribute("errorMessage", "Le password  n'a pas  etait Updated.");
+            session.setAttribute("errorMessage", "Le mot de passe n'a pas été mis à jour.");
             response.sendRedirect("changepassword.jsp");
+        }
+    }
+
+    private boolean verifyOldPassword(int userID, String oldPassword) {
+        try (Connection conn = DatabaseConn.getConnection();
+             PreparedStatement stmt = conn.prepareStatement("SELECT password FROM users WHERE id = ?")) {
+
+            stmt.setInt(1, userID);
+            ResultSet resultSet = stmt.executeQuery();
+
+            if (resultSet.next()) {
+                String hashedPassword = resultSet.getString("password");
+                return BCrypt.checkpw(oldPassword, hashedPassword);
+            }
+
+            return false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 

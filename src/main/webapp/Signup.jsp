@@ -19,27 +19,17 @@
 <div class="container mt-5">
     <h2>User Registration Form</h2>
     <%
-
-        String errorMessage = (String) session.getAttribute("errorMessage");
-
-    %>
-
-    <%
-
+        String errorMessage = (String) request.getAttribute("errorMessage");
         if (errorMessage != null && !errorMessage.isEmpty()) {
     %>
     <div class="alert alert-danger" role="alert">
         <%= errorMessage %>
     </div>
-    <%
-
-
-            session.removeAttribute("errorMessage");
-        } %>
+    <% } %>
     <form action="Signup" method="post">
         <div class="form-row">
             <div class="form-group col-md-6">
-                <label for="name">Name</label>
+                <label for="name">Nom</label>
                 <input type="text" class="form-control" id="name" name="name" required>
             </div>
             <div class="form-group col-md-6">

@@ -40,29 +40,27 @@ public class User extends HttpServlet {
                 if (rs.next()) {
                     String storedHash = rs.getString("password");
                     boolean isAdmin = rs.getBoolean("Admin");
-                    int userId = rs.getInt("id"); // Retrieve the user's ID
+                    int userId = rs.getInt("id");
 
                     if (BCrypt.checkpw(inputPassword, storedHash)) {
                         session.setAttribute("Login", name);
-                        session.setAttribute("UserId", userId); // Store the user's ID in the session
-
-                        // Check if the user is an admin and redirect accordingly
+                        session.setAttribute("UserId", userId);
                         if (isAdmin) {
-                            response.sendRedirect("dashboard_Admin.jsp");
+                            request.getRequestDispatcher("dashboard_Admin.jsp").forward(request, response);
                         } else {
-                            response.sendRedirect("Dashboard.jsp");
+                            request.getRequestDispatcher("Dashboard.jsp").forward(request, response);
                         }
                     } else {
-                        session.setAttribute("errorMessage", "Invalid username or password");
-                        response.sendRedirect("Login.jsp");
+                        request.setAttribute("errorMessage", "Invalid username or password");
+                        request.getRequestDispatcher("Login.jsp").forward(request, response);
                     }
                 } else {
-                    session.setAttribute("errorMessage", "User n'existe PAS !!");
-                    response.sendRedirect("Login.jsp");
+                    request.setAttribute("errorMessage", "User n'existe PAS !!");
+                    request.getRequestDispatcher("Login.jsp").forward(request, response);
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Better error handling
+            e.printStackTrace();
             // e.g., response.sendRedirect("Error.jsp");
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);

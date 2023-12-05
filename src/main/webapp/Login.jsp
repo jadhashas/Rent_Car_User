@@ -16,8 +16,8 @@
 <div class="container mt-5">
     <h1>Login</h1>
     <%
-        String successMessage = (String) session.getAttribute("successMessage");
-        String errorMessage = (String) session.getAttribute("errorMessage");
+        String successMessage = (String) request.getAttribute("successMessage");
+        String errorMessage = (String) request.getAttribute("errorMessage");
         if (successMessage != null && !successMessage.isEmpty()) {
     %>
     <div class="alert alert-success" role="alert">
@@ -30,11 +30,7 @@
     <div class="alert alert-danger" role="alert">
         <%= errorMessage %>
     </div>
-    <%
-
-        session.removeAttribute("successMessage");
-        session.removeAttribute("errorMessage");
-    } %>
+    <% } %>
     <form method="POST" action="User">
         <div class="form-group">
             <label for="txtNom">Nom :</label>

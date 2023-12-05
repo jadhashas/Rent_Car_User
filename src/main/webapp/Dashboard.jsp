@@ -12,5 +12,27 @@
 <body>
 <h1>HELLO <%= session.getAttribute("Login")%></h1>
 <a href="changepassword" class="btn btn-success">ModifierPWD</a>
+<a href="#" class="btn btn-success" data-toggle="modal" data-target="#confirmLogoutModal">Se déconnecter</a>
+
+<!-- Logout Confirmation Modal -->
+<div class="modal fade" id="confirmLogoutModal" tabindex="-1" role="dialog" aria-labelledby="confirmLogoutModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmLogoutModalLabel">Confirmation de déconnexion</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Êtes-vous sûr de vouloir vous déconnecter?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+        <a href="Logout" class="btn btn-primary">Se déconnecter</a>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>

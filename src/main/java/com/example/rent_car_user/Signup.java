@@ -36,41 +36,39 @@ public class Signup extends HttpServlet {
         String tel = request.getParameter("tel");
 
         if (age < 0 || age > 90) {
-            HttpSession session = request.getSession();
-            session.setAttribute("errorMessage", "L'âge doit être compris entre 0 et 90 ans.");
-            response.sendRedirect("Signup.jsp");
+            request.setAttribute("errorMessage", "L'âge doit être compris entre 0 et 90 ans.");
+            request.getRequestDispatcher("Signup.jsp").forward(request, response);
             return;
         }
 
         if (!isValidEmail(email)) {
             HttpSession session = request.getSession();
-            session.setAttribute("errorMessage", "Format de l'email invalide.");
-            response.sendRedirect("Signup.jsp");
+            request.setAttribute("errorMessage", "Format de l'email invalide.");
+            request.getRequestDispatcher("Signup.jsp").forward(request, response);
             return;
         }
 
         if (name.isEmpty() || prenom.isEmpty() || login.isEmpty() || email.isEmpty() || password.isEmpty() || tel.isEmpty()) {
-            response.sendRedirect("Signup.jsp?error=missingFields");
+            request.setAttribute("errorMessage", "Tout les champs sont obligatoire !!");
+            request.getRequestDispatcher("Signup.jsp").forward(request, response);
             return;
         }
 
         if (!confirmpassword.equals(password)) {
-            HttpSession session = request.getSession();
-            session.setAttribute("errorMessage", "Les mots de passe ne correspondent pas.");
-            response.sendRedirect("Signup.jsp");
+            request.setAttribute("errorMessage", "Les mots de passe ne correspondent pas.");
+            request.getRequestDispatcher("Signup.jsp").forward(request, response);
             return;
         }
 
         String hashedPassword = hashPassword(password);
 
         if (insertUser(name, prenom, age, login, email, hashedPassword, tel)) {
-            HttpSession session = request.getSession();
-            session.setAttribute("successMessage", "Inscription réussie. Connectez-vous maintenant !");
-            response.sendRedirect("Login.jsp");
+            request.setAttribute("successMessage", "Inscription réussie. Connectez-vous maintenant !");
+//            request.getRequestDispatcher("User").forward(request, response);
+            request.getRequestDispatcher("Login.jsp").forward(request, response);
         } else {
-            HttpSession session = request.getSession();
-            session.setAttribute("errorMessage", "Erreur lors de l'inscription. Veuillez réessayer.");
-            response.sendRedirect("Signup.jsp");
+            request.setAttribute("errorMessage", "Erreur lors de l'inscription. Veuillez réessayer.");
+            request.getRequestDispatcher("Signup.jsp").forward(request, response);
         }
     }
 
